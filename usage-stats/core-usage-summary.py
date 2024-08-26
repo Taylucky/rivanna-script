@@ -100,7 +100,7 @@ def merge_data(usage_file, account_file, org_file, capacity_file, hours, groups=
 	usage_df['JobType'] = usage_df.apply(lambda row: job_type(row), axis=1)
 	#usage_df['Utilization'] = usage_df.apply(lambda row: utilization(row, cap_dict), axis=1)
 	usage_df['PartitionType'] = usage_df.apply(lambda row: partition_type(row), axis=1)
-	usage_df['Wait Time hours'] = usage_df['resvcpuraw'] / usage_df['reqcpus'] / 3600
+	usage_df['Mean wait time hours/job'] = usage_df['resvcpuraw'] / usage_df['reqcpus'] / 3600
 
 	usage_df = usage_df.drop(columns=["cputimeraw", "alloccpus", "GPU devices"])
 	if "Utilization" in usage_df:
@@ -108,7 +108,7 @@ def merge_data(usage_file, account_file, org_file, capacity_file, hours, groups=
 
 	org_groups = [g for g in groups if g in usage_df.columns.values]
 	#usage_df = usage_df.groupby(org_groups).sum().reset_index()
-	usage_df = usage_df = usage_df.groupby(org_groups).agg({'resvcpuraw': 'sum','reqcpus': 'sum','Total CPU hours': 'sum','Total GPU hours': 'sum','Wait Time hours': 'mean'}).reset_index() #sum to average
+	usage_df = usage_df = usage_df.groupby(org_groups).agg({'resvcpuraw': 'sum','reqcpus': 'sum','Total CPU hours': 'sum','Total GPU hours': 'sum','Mean wait time hours/job': 'mean'}).reset_index() #sum to average
 	print(usage_df)
 
 	org_df = pd.read_csv(org_file, delimiter=r"\s+", header=0, names=['Organization', 'School'])
